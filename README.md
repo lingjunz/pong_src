@@ -31,3 +31,9 @@ c.NotebookApp.port = 8888  # 设置端口8888，也可用其他的，比如1080�
 * 配置jupyter notebook kernel
     * `conda install ipykernel`
     * 激活虚拟环境，将环境写入notebook的kernel中, python -m ipykernel install --user --name pong --display-name pong
+    
+## 1.4 替换roboschool包里的相关文件
+
+* run cd ~/anaconda3/envs/pong/lib/python3.6/site-packages/roboschool and copy the gym_pong.py, multiplayer.py and monitor.py files in the following folder https://drive.google.com/drive/folders/1A1U83hnu7S6kdVl6Q16ZW-hbNouigZF8?usp=sharing to the current folder roboschool.
+
+* These files are stored in the 'replace' folder. `cp ./replace/* ~/anaconda3/envs/pong/lib/python3.6/site-packages/roboschool`
