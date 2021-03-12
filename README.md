@@ -1,0 +1,33 @@
+# 1. Pong环境配置
+
+## 1.1 安装必要的package
+
+1. 安装openmpi: `sudo apt-get update && sudo apt-get install cmake libopenmpi-dev zlib1g-dev`
+2. `sudo apt-get install libpcre3-dev libharfbuzz0b libgl1-mesa-glx`
+
+## 1.2 安装Anaconda
+
+* 下载：`wget https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh`
+* 安装：`bash ./Anaconda3-2020.11-Linux-x86_64.sh`
+* (should be changed)echo 'export PATH="$pathToAnaconda/anaconda3/bin:$PATH"' >> ~/.bashrc
+* (optional) conda config --set auto_activate_base false
+
+## 1.3 配置jupyter notebook
+
+* 生成配置文件：jupyter notebook --generate-config
+* 设置密码：jupyter notebook password
+* 修改配置文件：vim ~/.jupyter/jupyter_notebook_config.py
+
+```
+# 添加(覆盖)下面内容
+c.NotebookApp.ip = '*' # 开启所有的IP访问，即可使用远程访问
+c.NotebookApp.open_browser = False # 关闭启动后的自动开启浏览器
+c.NotebookApp.port = 8888  # 设置端口8888，也可用其他的，比如1080，8080等等
+```
+
+* 创建conda虚拟环境
+    * 导出已有环境：在虚拟环境中执行conda env export > grid.yaml
+    * 根据导出文件创建环境：conda env create -f grid.yaml
+* 配置jupyter notebook kernel
+    * `conda install ipykernel`
+    * 激活虚拟环境，将环境写入notebook的kernel中, python -m ipykernel install --user --name pong --display-name pong
