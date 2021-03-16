@@ -37,3 +37,10 @@ c.NotebookApp.port = 8888  # 设置端口8888，也可用其他的，比如1080�
 * run cd ~/anaconda3/envs/pong/lib/python3.6/site-packages/roboschool and copy the gym_pong.py, multiplayer.py and monitor.py files in the following folder https://drive.google.com/drive/folders/1A1U83hnu7S6kdVl6Q16ZW-hbNouigZF8?usp=sharing to the current folder roboschool.
 
 * These files are stored in the 'replace' folder. `cp ./replace/* ~/anaconda3/envs/pong/lib/python3.6/site-packages/roboschool`
+
+# 2. Pong实验设置
+## 2.1 获得Agent Under Testing (AUT)
+
+* 针对[roboschool agent_zoo](https://github.com/openai/roboschool/tree/master/agent_zoo)中提供的Pong_2017may1 agent，利用[stable baselines(v2.5.1)](https://stable-baselines.readthedocs.io/en/v2.5.0/)训练得到一个新的agent **AUT**， 并对其进行白盒场景下的分析测试。
+    * `python play_pong_train.py --memo pong --server pongScene --mod ppotrain --model_name ppo1AUT --hyper_index 11 --x_method None --mimic_model_path None --oppo_name 2017may1 --save_victim_traj False --save_trajectory False`
+

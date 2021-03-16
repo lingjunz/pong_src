@@ -2,7 +2,7 @@ import numpy as np
 import os
 import gym
 import roboschool
-from pposgd_wrap import PPO1_model_value
+from ppoadv.pposgd_wrap import PPO1_model_value
 
 def make_dirs(dir_dict):
     for key, value in dir_dict.items():

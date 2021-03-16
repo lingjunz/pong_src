@@ -5,7 +5,7 @@ import gym
 import traceback
 from monitor import Monitor
 
-
+print("....load multiplayer from current folder")
 MULTIPLAYER_FILES_DIR = "/tmp"
 
 class SharedMemoryClientEnv:

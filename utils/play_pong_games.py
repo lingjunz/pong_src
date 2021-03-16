@@ -1,6 +1,7 @@
 import os, sys, subprocess, time
 import argparse
-import roboschool, multiplayer
+import roboschool
+import multiplayer
 
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)

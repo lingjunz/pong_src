@@ -1,15 +1,25 @@
-from play_pong_train import INF,SEED
-import os, sys, subprocess
-import numpy as np
+
 import gym
-from gym import wrappers
 import roboschool
-from stable_baselines.common.vec_env import DummyVecEnv,SubprocVecEnv, VecVideoRecorder
-import pickle as pkl
+from gym import wrappers
+
+
+import joblib
+import numpy as np
+import os, sys, subprocess
 from copy import deepcopy
 
+
+from play_pong_train import INF,SEED
+# from stable_baselines import PPO1
+from replace.pposgd_simple import PPO1
+from stable_baselines.common.vec_env import DummyVecEnv#,SubprocVecEnv, VecVideoRecorder
+# import pickle as pkl
+
+
+
 STEPS = INF
-def play(env, model, player_n,steps):
+def play(env, model, player_n, steps, opponent):
     obs_list = []
     acts_list = []
     rwds_list = []
@@ -23,7 +33,12 @@ def play(env, model, player_n,steps):
             # try:
             count += 1
             old_obs = deepcopy(obs)
-            a, _ ,lastpi = model.predict(obs)
+            
+            if '2017' in opponent:
+                a = model.act(obs)
+                lastpi = a
+            else:
+                a, _ ,lastpi = model.predict(obs)
             
             obs, rew, done, info = env.step(a)
             
@@ -48,29 +63,27 @@ def play(env, model, player_n,steps):
         break
     return trajectory_dic
 
-def test():
+def test(game_server_guid, opponent, save_oppo_traj):
     env = gym.make("RoboschoolPong-v1")
     env.seed(SEED)
     player_n = 1
-    env.unwrapped.multiplayer(env, game_server_guid=sys.argv[1], player_n=player_n)
+    env.unwrapped.multiplayer(env, game_server_guid=game_server_guid, player_n=player_n)
+    # print(">>>>game_server_id[player1]:",game_server_id)
     env = DummyVecEnv([lambda: env])
-    print("player 2 running in Env {0}".format(sys.argv[1]))
-
-    # from RoboschoolPong_v0_2017may1 import SmallReactivePolicy as Pol1
-    # pi = Pol1(env.observation_space, env.action_space)
-    from stable_baselines import PPO1
-    import joblib
-    modelpath = "./Log/ppo1TFS-02262021-114243-victim/model/best_model.pkl"
-    model = PPO1.load(modelpath,env=env)
-
-    savepath = "./Log/ppo1TFS-02262021-114243-victim/model/ppo1-advtrain-trajectory-test.data"
-    trajectory_dic = play(env, model, player_n, STEPS)
-
-    joblib.dump(trajectory_dic,savepath)
+    print("player 2 running in Env {0}".format(game_server_guid))
     
-    # with open(savepath, 'wb+') as f:
-    #     pkl.dump(trajectory_dic, f, protocol=2)
+
+    if opponent=="2017may1":
+        from pretrained.RoboschoolPong_v0_2017may1 import SmallReactivePolicy as Pol1
+        model = Pol1(env.observation_space, env.action_space)
+    else:
+        assert False,"Wrong opponent name: {}".format(opponent)
+
+    trajectory_dic = play(env, model, player_n, STEPS, opponent)
+    if save_oppo_traj != "":
+        joblib.dump(trajectory_dic, save_oppo_traj)
+    
 
 
 if sys.argv[2] == "test":
-    test()
+    test(sys.argv[1], sys.argv[3], sys.argv[4])

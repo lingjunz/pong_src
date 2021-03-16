@@ -11,20 +11,22 @@ from stable_baselines.common import Dataset, explained_variance, fmt_row, zipsam
 from stable_baselines import logger,PPO1
 import stable_baselines.common.tf_util as tf_util
 # from stable_baselines.common.policies import ActorCriticPolicy
-from policies import ActorCriticPolicy
+from ppoadv.policies import ActorCriticPolicy
 from stable_baselines.common.mpi_adam import MpiAdam
 from stable_baselines.common.mpi_moments import mpi_moments
 from stable_baselines.trpo_mpi.utils import traj_segment_generator, add_vtarg_and_adv, flatten_lists
 from stable_baselines.a2c.utils import total_episode_reward_logger
 from tensorflow import keras
 
-from explain_master_gradient import MasterModel
-from explain_gradient import GradientExp
+from ppoadv.explain_master_gradient import MasterModel
+from ppoadv.explain_gradient import GradientExp
+from ppoadv.mimic_action import MimicModel
+
 import pickle as pkl
 import joblib
 import cloudpickle
 import os
-from mimic_action import MimicModel
+
 
 class PPO1_model_value(ActorCriticRLModel):
     """

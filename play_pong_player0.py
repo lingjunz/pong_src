@@ -1,46 +1,52 @@
-from play_pong_train import INF,SEED
 
+from play_pong_train import INF,SEED
 import random
 random.seed(SEED)
-import os, sys, subprocess
-os.environ["CUDA_VISIBLE_DEVICES"] = "0"
-
 import numpy as np
 np.random.seed(SEED)
-import gym
-import roboschool
-from stable_baselines.common.policies import MlpPolicy,MlpLstmPolicy
-from stable_baselines import PPO1, PPO2
-from pposgd_wrap import PPO1_model_value
 
-from policies import MlpPolicy_hua
-
-from stable_baselines.common.vec_env import DummyVecEnv,SubprocVecEnv, VecVideoRecorder
-from stable_baselines.results_plotter import load_results, ts2xy
-from stable_baselines.bench import Monitor
-# import time
-import argparse
-from shutil import copyfile
-import traceback
-# import pickle as pkl
+import os
+import sys
+import time
 import joblib
-# import multiprocessing
-# import pandas as pd
-
-# global player_n
-# player_n = 0
+import argparse
+import traceback
 
 from datetime import datetime
-from logger import setup_logger
+from shutil import copyfile
+# import subprocess
+# os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
+
+import gym
+import roboschool
+from ppoadv.policies import MlpPolicy_hua 
+from ppoadv.pposgd_wrap import PPO1_model_value
+# from stable_baselines import PPO1
+from replace.pposgd_simple import PPO1
+from replace.policies import MlpPolicy
 from stable_baselines import logger
+# from stable_baselines.common.policies import MlpPolicy
+from stable_baselines.common.vec_env import DummyVecEnv,SubprocVecEnv
+from stable_baselines.results_plotter import load_results, ts2xy
+from stable_baselines.bench import Monitor
+
+from utils.logger import setup_logger
+from utils.pong_utils import make_dirs,test
+
+# import pickle as pkl
+# import multiprocessing
+# import pandas as pd
+# global player_n
+# player_n = 0
 # import json
-from pong_utils import make_dirs,test
+# USE_VIC = False
+
 
 best_mean_reward = -np.inf
 dir_dict = None
-
 TRAINING_ITER = INF
-# USE_VIC = False
+
 
 
 
@@ -81,7 +87,7 @@ def advlearn(env, model_name=None, dir_dict=None):
 
     _, _ = setup_logger(SAVE_DIR, EXP_NAME)
 
-    if model_name == 'ppo1_oppomodel':
+    if model_name == 'ppo1Adv':
         ## inline hyperparameters
         ## param timesteps_per_actorbatch: timesteps per actor per update
         ## other inline hyperparameters is by default choice in file 'PPO1_model_value'
@@ -101,11 +107,12 @@ def advlearn(env, model_name=None, dir_dict=None):
                          policy_kwargs={"net_arch":net_arch})
     else:
         net_arch = [64,64,dict(pi=[6])]
-        model = PPO1(MlpPolicy, env, timesteps_per_actorbatch=1000, verbose=1,save_trajectory = dir_dict['_save_victim_traj'],
+        model = PPO1(MlpPolicy, env, timesteps_per_actorbatch=1000, verbose=1, save_trajectory = dir_dict['_save_trajectory'],
                      tensorboard_log=dir_dict['tb'], policy_kwargs={"net_arch":net_arch})
     try:
         model,trajectory_dic = model.learn(TRAINING_ITER, callback=callback, seed=SEED)
-        joblib.dump(trajectory_dic,"{}train-trajectory.data".format(dir_dict['model']))
+        if dir_dict['_save_trajectory']==1:
+            joblib.dump(trajectory_dic,"{}train-trajectory.data".format(dir_dict['model']))
         
     except ValueError as e:
         traceback.print_exc()
@@ -118,6 +125,7 @@ def advlearn(env, model_name=None, dir_dict=None):
 def advtrain(server_id, model_name="ppo1", dir_dict=None):
     env = gym.make("RoboschoolPong-v1")
     env.seed(SEED)
+    # print(">>>>game_server_id[advtrain]:",server_id)
     env.unwrapped.multiplayer(env, game_server_guid=server_id, player_n=dir_dict["_player_index"])
     # Only support PPO2 and num cpu is 1
 
@@ -140,8 +148,8 @@ def parse_args():
     parser.add_argument("--hyper_index", type=int)
     parser.add_argument("--x_method", type=str)
     parser.add_argument("--mimic_model_path", type=str)
-    parser.add_argument("--save_victim_traj", type=bool)
-    parser.add_argument("--save_trajectory", type=bool)
+    parser.add_argument("--save_victim_traj", type=int)
+    parser.add_argument("--save_trajectory", type=int)
     parser.add_argument("--seed", type=int)
     
 
@@ -158,6 +166,7 @@ if __name__=="__main__":
     date_time = now.strftime("%m%d%Y-%H%M%S")
 
     args = parse_args()
+    print(args)
     memo = args.memo
     server_id = args.server
     mode = args.mod
@@ -193,12 +202,15 @@ if __name__=="__main__":
     SAVE_DIR = './agent_zoo/'+ "Pong"
     EXP_NAME = str(args.seed)
 
-    if mode == "advtrain":
+    if "train" in mode :
         make_dirs(dir_dict)
         advtrain(server_id, model_name=model_name, dir_dict=dir_dict)
 
-    elif mode == "advtest":
+    elif "test" in mode:
         make_dirs(dir_dict)
         copyfile(dir_dict["_test_model_file"], 
                 "{0}agent{1}.pkl".format(dir_dict['model'], dir_dict['_player_index']))
         test(server_id, model_name=model_name, seed=SEED, dir_dict=dir_dict)
+
+    else:
+        assert False,"please set the correct mode:{}.".format(mode)

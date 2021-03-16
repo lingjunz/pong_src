@@ -1,14 +1,13 @@
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = ' '
 import tensorflow as tf
-import explain_gradient as exp
+import ppoadv.explain_gradient as exp
 import numpy as np
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense, Activation
 from tensorflow.python.keras.models import load_model
 from tensorflow.python.keras import backend as K
 
-from RoboschoolPong_v0_2017may2 import SmallReactivePolicy
+from pretrained.RoboschoolPong_v0_2017may2 import SmallReactivePolicy
 
 class MasterModel(object):
     weights_dense1_w_const = tf.constant(SmallReactivePolicy.weights_dense1_w, dtype=tf.float32)

@@ -3,8 +3,7 @@ import numpy as np
 import os
 import gym
 import traceback
-#from stable_baselines.bench import Monitor
-from monitor import Monitor
+from monitor import Monitor #from stable_baselines.bench import Monitor
 
 
 MULTIPLAYER_FILES_DIR = "/tmp"
