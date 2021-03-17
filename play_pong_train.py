@@ -16,7 +16,7 @@ tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 # python play_pong_train.py --memo pposgd --server ppoadv_train --mod advtrain --model_name ppo1_oppomodel --hyper_index 9 --x_method None --mimic_model_path None --save_victim_traj True --save_trajectory True
 
 # We assume the Game Server running forever
-INF = 2000
+INF = 4000000
 SEED = 2999 
 
 def parse_args():
@@ -57,8 +57,8 @@ if __name__=="__main__":
     mimic_model_path = args.mimic_model_path
     save_victim_traj = args.save_victim_traj
     save_trajectory = args.save_trajectory
-    print("aaaaaa",save_trajectory,save_victim_traj)
-    # seed = args.seed
+    # print("aaaaaa",save_trajectory,save_victim_traj)
+    seed = SEED
 
     opponent = args.oppo_name
 
@@ -71,14 +71,14 @@ if __name__=="__main__":
                 "--mod={2} --model_name={3} --hyper_index={4} " \
                 "--seed={5} --x_method={6} --mimic_model_path={7} --save_victim_traj={8} "\
                 "--save_trajectory={9}".format(memo, game_server_id, mode,
-                    model_name, hyper_index, SEED, x_method, mimic_model_path, save_victim_traj, save_trajectory)
+                    model_name, hyper_index, seed, x_method, mimic_model_path, save_victim_traj, save_trajectory)
 
-    print(">>>>game_server_id[train]:",game_server_id)
+    # print(">>>>game_server_id[train]:",game_server_id)
     # launch player0 (left player)
     player_0_args = player_0_args.split(" ")
     sys_cmd = [sys.executable, 'play_pong_player0.py']
     sys_cmd.extend(player_0_args)
-    print("bbbb",player_0_args)
+    # print("bbbb",player_0_args)
     p0 = subprocess.Popen(sys_cmd)
 
 

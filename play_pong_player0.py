@@ -86,12 +86,11 @@ def callback(_locals, _globals):
 def advlearn(env, model_name=None, dir_dict=None):
 
     _, _ = setup_logger(SAVE_DIR, EXP_NAME)
-
+    net_arch = [128,64,dict(pi=[6])]
     if model_name == 'ppo1Adv':
         ## inline hyperparameters
         ## param timesteps_per_actorbatch: timesteps per actor per update
         ## other inline hyperparameters is by default choice in file 'PPO1_model_value'
-        net_arch = [64,64,dict(pi=[6])]
         model = PPO1_model_value(MlpPolicy_hua, env, 
                         timesteps_per_actorbatch=1000, verbose=1,
                          tensorboard_log=dir_dict['tb'], 
@@ -106,11 +105,10 @@ def advlearn(env, model_name=None, dir_dict=None):
                          save_trajectory = dir_dict['_save_trajectory'],
                          policy_kwargs={"net_arch":net_arch})
     else:
-        net_arch = [64,64,dict(pi=[6])]
         model = PPO1(MlpPolicy, env, timesteps_per_actorbatch=1000, verbose=1, save_trajectory = dir_dict['_save_trajectory'],
                      tensorboard_log=dir_dict['tb'], policy_kwargs={"net_arch":net_arch})
     try:
-        model,trajectory_dic = model.learn(TRAINING_ITER, callback=callback, seed=SEED)
+        model,trajectory_dic = model.learn(TRAINING_ITER, callback=callback, seed=dir_dict['_seed'])
         if dir_dict['_save_trajectory']==1:
             joblib.dump(trajectory_dic,"{}train-trajectory.data".format(dir_dict['model']))
         
@@ -124,7 +122,7 @@ def advlearn(env, model_name=None, dir_dict=None):
 
 def advtrain(server_id, model_name="ppo1", dir_dict=None):
     env = gym.make("RoboschoolPong-v1")
-    env.seed(SEED)
+    env.seed(dir_dict['_seed'])
     # print(">>>>game_server_id[advtrain]:",server_id)
     env.unwrapped.multiplayer(env, game_server_guid=server_id, player_n=dir_dict["_player_index"])
     # Only support PPO2 and num cpu is 1
@@ -166,7 +164,7 @@ if __name__=="__main__":
     date_time = now.strftime("%m%d%Y-%H%M%S")
 
     args = parse_args()
-    print(args)
+    # print(args)
     memo = args.memo
     server_id = args.server
     mode = args.mod
@@ -210,7 +208,7 @@ if __name__=="__main__":
         make_dirs(dir_dict)
         copyfile(dir_dict["_test_model_file"], 
                 "{0}agent{1}.pkl".format(dir_dict['model'], dir_dict['_player_index']))
-        test(server_id, model_name=model_name, seed=SEED, dir_dict=dir_dict)
+        test(server_id, model_name=model_name, seed=dir_dict['_seed'], dir_dict=dir_dict)
 
     else:
         assert False,"please set the correct mode:{}.".format(mode)

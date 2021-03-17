@@ -38,9 +38,14 @@ c.NotebookApp.port = 8888  # 设置端口8888，也可用其他的，比如1080�
 
 * These files are stored in the 'replace' folder. `cp ./replace/* ~/anaconda3/envs/pong/lib/python3.6/site-packages/roboschool`
 
-# 2. Pong实验设置
+# 2. Pong实验流程
 ## 2.1 获得Agent Under Testing (AUT)
 
 * 针对[roboschool agent_zoo](https://github.com/openai/roboschool/tree/master/agent_zoo)中提供的Pong_2017may1 agent，利用[stable baselines(v2.5.1)](https://stable-baselines.readthedocs.io/en/v2.5.0/)训练得到一个新的agent **AUT**， 并对其进行白盒场景下的分析测试。
-    * `python play_pong_train.py --memo pong --server pongScene --mod ppotrain --model_name ppo1AUT --hyper_index 11 --x_method None --mimic_model_path None --oppo_name 2017may1 --save_victim_traj False --save_trajectory False`
+    * `python play_pong_train.py --memo pong --server pongScene --mod ppotrain --model_name ppo1AUT --hyper_index 11 --x_method None --mimic_model_path None --oppo_name 2017may1 --save_oppo_traj ./pretrained/2017may1_against_ppo_traj.data --save_victim_traj 0 --save_trajectory 1`
+    * 训练过程中AUT的轨迹信息是否保存由`--save_trajectory 1`控制，若保存，则对应数据会和best_model存在同一个位置
+    * 训练过程中对手的轨迹信息是否保存由`--save_oppo_traj ./pretrained/2017may1_against_ppo_traj.data`控制，若保存，则指定存储位置即可，默认为`''`不保存。
+    * 同时运行多个程序时，用`--hyper_index 11`参数来区分，防止不同程序访问同一片共享内存。共享文件保存在`/tmp/`目录下，必要时可以清空上一次运行程序生成的文件`rm -rf multiplayer_p*`。
+
+## 2.2 
 

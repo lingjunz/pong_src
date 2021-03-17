@@ -34,8 +34,9 @@ def play(env, model, player_n, steps, opponent):
             count += 1
             old_obs = deepcopy(obs)
             
-            if '2017' in opponent:
+            if '2017may' in opponent:
                 a = model.act(obs)
+                a = a[0]
                 lastpi = a
             else:
                 a, _ ,lastpi = model.predict(obs)
@@ -70,7 +71,7 @@ def test(game_server_guid, opponent, save_oppo_traj):
     env.unwrapped.multiplayer(env, game_server_guid=game_server_guid, player_n=player_n)
     # print(">>>>game_server_id[player1]:",game_server_id)
     env = DummyVecEnv([lambda: env])
-    print("player 2 running in Env {0}".format(game_server_guid))
+    # print("player 2 running in Env {0}".format(game_server_guid))
     
 
     if opponent=="2017may1":
