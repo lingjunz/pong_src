@@ -1012,7 +1012,7 @@ class PPO1_model_value(ActorCriticRLModel):
                 clipped_actions = clipped_actions[0]
             return clipped_actions, vpred
         else:
-            from RoboschoolPong_v0_2017may1 import SmallReactivePolicy
+            from RoboschoolPong_v0_2017may2 import SmallReactivePolicy
             return SmallReactivePolicy.output_act_for_adv(obs_opp_ph), np.zeros(shape=(obs_opp_ph.shape[0],))
 
     def modeling_state(self, action_ph, action_noise, obs_self):

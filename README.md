@@ -42,10 +42,30 @@ c.NotebookApp.port = 8888  # 设置端口8888，也可用其他的，比如1080�
 ## 2.1 获得Agent Under Testing (AUT)
 
 * 针对[roboschool agent_zoo](https://github.com/openai/roboschool/tree/master/agent_zoo)中提供的Pong_2017may1 agent，利用[stable baselines(v2.5.1)](https://stable-baselines.readthedocs.io/en/v2.5.0/)训练得到一个新的agent **AUT**， 并对其进行白盒场景下的分析测试。
-    * `python play_pong_train.py --memo pong --server pongScene --mod ppotrain --model_name ppo1AUT --hyper_index 11 --x_method None --mimic_model_path None --oppo_name 2017may1 --save_oppo_traj ./pretrained/2017may1_against_ppo_traj.data --save_victim_traj 0 --save_trajectory 1`
+    * `python play_pong_train.py --memo pong --server pongScene --mod ppotrain --model_name ppo1AUT --hyper_index 11 --x_method None --mimic_model_path None --oppo_name 2017may1 --save_oppo_traj ./pretrained/2017may1_against_ppo_traj.data --save_trajectory 1`
     * 训练过程中AUT的轨迹信息是否保存由`--save_trajectory 1`控制，若保存，则对应数据会和best_model存在同一个位置
     * 训练过程中对手的轨迹信息是否保存由`--save_oppo_traj ./pretrained/2017may1_against_ppo_traj.data`控制，若保存，则指定存储位置即可，默认为`''`不保存。
     * 同时运行多个程序时，用`--hyper_index 11`参数来区分，防止不同程序访问同一片共享内存。共享文件保存在`/tmp/`目录下，必要时可以清空上一次运行程序生成的文件`rm -rf multiplayer_p*`。
 
-## 2.2 
+## 2.2 固定AUT，利用ppo1算法训练得到ppo1N (opponent agent) ，并保留训练阶段AUT的轨迹数据
+    
+* 修改`~/anaconda3/envs/pong/lib/python3.6/site-packages/stable_baselines/common/base_class.py` 中predict函数(line 463)：
+    * 用`actions, _, states, _, last_pi = self.step(observation, state, mask, deterministic=deterministic)`替换line 472
+    * 用`return clipped_actions, states, last_pi`替换line 485
 
+* `python play_pong_train.py --memo pong --server pongScene --mod ppotrain --model_name ppo1N --hyper_index 11 --x_method None --mimic_model_path None --oppo_name AUT --save_oppo_traj ./Log/64-64-6-victim/model/AUT_against_ppoN.data --save_trajectory 0` # INF 小于3000000，即iteration小于3000即可，大概在2000+时，reward已经大于100
+
+## 2.3 固定AUT，利用ppo1Adv算法训练得到ppo1Adv (opponent agent) ，并保留训练阶段AUT的轨迹数据
+* 该算法默认的AUT是2017may2，理论上目前还不可以攻击其他AUT。但是在实际过程中，通过更换`play_pong_player1`中加载的模型，也是可以攻击成功的（可以理解为迁移性？）。
+    * `python play_pong_train.py --memo pong --server pongScene --mod advtrain --model_name ppo1Adv --hyper_index 12 --x_method None --mimic_model_path None --oppo_name AUT --save_oppo_traj ./Log/64-64-6-victim/model/AUT_against_ppoAdv.data --save_trajectory 1 --save_victim_traj 1`
+    * `play_pong_player0.py` line 176设置为白盒模式，即`hyper_weights = [0.0, -0.1, 0.0, 1, 0, 10, False, True, False]` 不加载pretrained mimic_model。
+        * 但是这里的白盒不是真正的白盒，因为pposgd中的oppo_model是2017may2，与`play_pong_player1`中加载的模型不一致。
+
+
+* 利用该算法时需要事先训练得到AUT的mimic model，从而进行后续的黑盒攻击。
+    * 可以直接加载原作者github中提供的well-trained mimic model,存储位置：`./pretrained/o_mimic_model.h5`
+    * 也可以利用另一个agent与AUT进行交互，得到trajectory信息，重新训练mimic model。
+
+
+## 2.4 加载两个训练好的agent进行游戏
+    

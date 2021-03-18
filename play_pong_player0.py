@@ -86,7 +86,7 @@ def callback(_locals, _globals):
 def advlearn(env, model_name=None, dir_dict=None):
 
     _, _ = setup_logger(SAVE_DIR, EXP_NAME)
-    net_arch = [128,64,dict(pi=[6])]
+    net_arch = [64,64,dict(pi=[6])]
     if model_name == 'ppo1Adv':
         ## inline hyperparameters
         ## param timesteps_per_actorbatch: timesteps per actor per update
@@ -172,8 +172,8 @@ if __name__=="__main__":
     hyper_weights_index = args.hyper_index
     player_index = args.player_index
     test_model_file = args.test_model_file
-    # hyper_weights = [0.0, -0.1, 0.0, 1, 0, 10, True, True, False]
-    hyper_weights = [0.0, -0.1, 0.0, 1, 0, 10, False, True, False]
+    # hyper_weights = [0.0, -0.1, 0.0, 1, 0, 10, True, True, False] # blackbox
+    hyper_weights = [0.0, -0.1, 0.0, 1, 0, 10, False, True, False] # whitebox
 
     
     dir_dict= {

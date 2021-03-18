@@ -8,12 +8,7 @@ import multiplayer
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-# python play_pong_train.py --memo pong --server pongScene --mod Ntrain --model_name ppo1AUT --hyper_index 11 --x_method None --mimic_model_path None --seed 101 --oppo_name 2017may1 # train a model against 2017may1 with customized net_arch
 
-
-# python play_pong_train.py --memo ppo1TFS --server ppodemo_train --mod advtrain --model_name ppo1Model --hyper_index 9 --x_method None --mimic_model_path None --save_victim_traj True # train a model against victim agent with customized net_arch
-
-# python play_pong_train.py --memo pposgd --server ppoadv_train --mod advtrain --model_name ppo1_oppomodel --hyper_index 9 --x_method None --mimic_model_path None --save_victim_traj True --save_trajectory True
 
 # We assume the Game Server running forever
 INF = 4000000

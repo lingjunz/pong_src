@@ -40,9 +40,10 @@ def play(env, model, player_n, steps, opponent):
                 lastpi = a
             else:
                 a, _ ,lastpi = model.predict(obs)
+                a = a[0]
             
             obs, rew, done, info = env.step(a)
-            
+
             hidden_list.append(lastpi.copy())
             acts_list.append(a.copy())
             obs_list.append(old_obs.copy())
@@ -77,6 +78,15 @@ def test(game_server_guid, opponent, save_oppo_traj):
     if opponent=="2017may1":
         from pretrained.RoboschoolPong_v0_2017may1 import SmallReactivePolicy as Pol1
         model = Pol1(env.observation_space, env.action_space)
+    
+    elif opponent=="2017may2":
+        from pretrained.RoboschoolPong_v0_2017may2 import SmallReactivePolicy as Pol2
+        model = Pol2(env.observation_space, env.action_space)
+
+    elif opponent=="AUT":
+        modelpath = "./Log/64-64-6-victim/model/best_model.pkl"
+        model = PPO1.load(modelpath, env=env)
+    
     else:
         assert False,"Wrong opponent name: {}".format(opponent)
 
