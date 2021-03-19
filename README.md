@@ -81,5 +81,5 @@ c.NotebookApp.port = 8888  # 设置端口8888，也可用其他的，比如1080�
 * 在utils目录下，运行`python play_pong_games.py --memo ppoN --server playGames --mod test --hyper_index 9 --save_victim_traj test_ppoN_traj.data --seed 101`，其中AUT为player0，轨迹信息将保存在AUT模型所在的目录，文件名由`--save_victim_traj`确定。
 
 ### 2.3.3 ppoAdv： AUT vs ppoAdv
-* 修改`utils/play_pong_games.py`中的`path0=../Log/64-64-6-victim/model/best_model.pkl, path1 = ../Log/pong-03182021-160626_ppoAdv/model/best_model.pkl`。
+* 修改`utils/play_pong_games.py`中的`path0=../Log/64-64-6-victim/model/best_model.pkl, path1 = ../Log/pong-03192021-103513_ppoAdv/model/best_model.pkl`。
 * 在utils目录下，运行`python play_pong_games.py --memo ppoAdv --server playGames --mod test --hyper_index 9 --save_victim_traj test_ppoAdv_traj.data --seed 101`，其中AUT为player0，轨迹信息将保存在AUT模型所在的目录，文件名由`--save_victim_traj`确定。

@@ -51,7 +51,7 @@ def play(env, model, player_n, steps):
                 }
                 break
             
-            if count%10000==0:
+            if count%10000 == 0:
                 print(count, info)
 
         break
@@ -69,10 +69,11 @@ def test(game_server_id, seed, player_n, modelpath, savepath, steps):
 
         if 'victim' in modelpath or 'ppoN' in modelpath:
             model = PPO1.load(modelpath,env=env)
-        elif 'ppoAdv' in modelpath:
-            model = PPO1_model_value.load(modelpath,env=env)
+        # elif 'ppoAdv' in modelpath:
         else:
-            assert False,"wrong modelpath:{}".format(modelpath)
+            model = PPO1_model_value.load(modelpath,env=env)
+        # else:
+            # assert False,"wrong modelpath:{}".format(modelpath)
     else:
         assert False,"Pretrained model is not found in {}".format(modelpath)
         

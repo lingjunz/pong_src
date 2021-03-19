@@ -1,6 +1,6 @@
 import os, sys, subprocess
 import argparse
-import roboschool, multiplayer
+import roboschool, new_multiplayer
 
 
 # We assume the Game Server running forever
@@ -40,7 +40,7 @@ adv_model = args.adv_model
 # create the gameserver, the same as enviroment
 game_server_id = args.server+"{0}".format(hyper_index)
 game = roboschool.gym_pong.PongSceneMultiplayer()
-gameserver = multiplayer.SharedMemoryServer(game, game_server_id, want_test_window=False, profix=str(hyper_index))
+gameserver = new_multiplayer.SharedMemoryServer(game, game_server_id, want_test_window=False, profix=str(hyper_index))
 
 # setting up the player 0
 player_0_args = "--memo={0} --server={1} " \

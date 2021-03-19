@@ -10,7 +10,7 @@ import os, sys, subprocess
 from copy import deepcopy
 
 
-from play_pong_train import INF,SEED
+from configs import INF,SEED
 # from stable_baselines import PPO1
 from replace.pposgd_simple import PPO1
 from stable_baselines.common.vec_env import DummyVecEnv#,SubprocVecEnv, VecVideoRecorder
@@ -40,7 +40,7 @@ def play(env, model, player_n, steps, opponent):
                 lastpi = a
             else:
                 a, _ ,lastpi = model.predict(obs)
-                a = a[0]
+                # a = a[0]
             
             obs, rew, done, info = env.step(a)
 

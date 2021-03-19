@@ -4,15 +4,12 @@ import sys
 import time
 import argparse, subprocess
 import roboschool
-import multiplayer
+import new_multiplayer
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
+from configs import INF,SEED
 
-
-# We assume the Game Server running forever
-INF = 4000000
-SEED = 2999 
 
 def parse_args():
 
@@ -60,7 +57,7 @@ if __name__=="__main__":
     # create the gameserver, the same as enviroment
     game_server_id = server+"{0}".format(hyper_index)
     game = roboschool.gym_pong.PongSceneMultiplayer()
-    gameserver = multiplayer.SharedMemoryServer(game, game_server_id, want_test_window=False, profix=str(hyper_index))
+    gameserver = new_multiplayer.SharedMemoryServer(game, game_server_id, want_test_window=False, profix=str(hyper_index))
 
     player_0_args = "--memo={0} --server={1} " \
                 "--mod={2} --model_name={3} --hyper_index={4} " \

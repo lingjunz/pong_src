@@ -1,5 +1,5 @@
 
-from play_pong_train import INF,SEED
+from configs import INF,SEED
 import random
 random.seed(SEED)
 import numpy as np
@@ -139,7 +139,6 @@ def advtrain(server_id, model_name="ppo1", dir_dict=None):
 
 
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument("--memo", type=str)
@@ -159,7 +158,6 @@ def parse_args():
     # parser.add_argument("--pretrain", action='store_true', default=False)
 
     return parser.parse_args()
-
 
 if __name__=="__main__":
 
