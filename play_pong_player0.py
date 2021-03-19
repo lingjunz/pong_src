@@ -91,6 +91,7 @@ def advlearn(env, model_name=None, dir_dict=None):
         ## inline hyperparameters
         ## param timesteps_per_actorbatch: timesteps per actor per update
         ## other inline hyperparameters is by default choice in file 'PPO1_model_value'
+        print("$$$$$ppo1Adv")
         model = PPO1_model_value(MlpPolicy_hua, env, 
                         timesteps_per_actorbatch=1000, verbose=1,
                          tensorboard_log=dir_dict['tb'], 
@@ -104,9 +105,11 @@ def advlearn(env, model_name=None, dir_dict=None):
                          save_victim_traj=dir_dict['_save_victim_traj'],
                          save_trajectory = dir_dict['_save_trajectory'],
                          policy_kwargs={"net_arch":net_arch})
-    else:
+    elif model_name in ['ppo1N','ppo1AUT']:
         model = PPO1(MlpPolicy, env, timesteps_per_actorbatch=1000, verbose=1, save_trajectory = dir_dict['_save_trajectory'],
                      tensorboard_log=dir_dict['tb'], policy_kwargs={"net_arch":net_arch})
+    else: 
+        assert False,"undefined model name:{}".format(model_name)
     try:
         model,trajectory_dic = model.learn(TRAINING_ITER, callback=callback, seed=dir_dict['_seed'])
         if dir_dict['_save_trajectory']==1:
@@ -168,7 +171,7 @@ if __name__=="__main__":
     memo = args.memo
     server_id = args.server
     mode = args.mod
-    model_name = args.model_name.lower()
+    model_name = args.model_name
     hyper_weights_index = args.hyper_index
     player_index = args.player_index
     test_model_file = args.test_model_file
