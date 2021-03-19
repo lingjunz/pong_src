@@ -935,7 +935,7 @@ class PPO1_model_value(ActorCriticRLModel):
             # Todo add prediction on output action
             return output_action, output_state_value
         else:
-            from RoboschoolPong_v0_2017may2 import SmallReactivePolicy
+            from pretrained.RoboschoolPong_v0_2017may2 import SmallReactivePolicy
             weights_dense1_w_const = tf.constant(SmallReactivePolicy.weights_dense1_w, dtype=tf.float32)
             weights_dense1_b_const = tf.constant(SmallReactivePolicy.weights_dense1_b, dtype=tf.float32)
             weights_dense2_w_const = tf.constant(SmallReactivePolicy.weights_dense2_w, dtype=tf.float32)
@@ -1012,7 +1012,7 @@ class PPO1_model_value(ActorCriticRLModel):
                 clipped_actions = clipped_actions[0]
             return clipped_actions, vpred
         else:
-            from RoboschoolPong_v0_2017may2 import SmallReactivePolicy
+            from pretrained.RoboschoolPong_v0_2017may2 import SmallReactivePolicy
             return SmallReactivePolicy.output_act_for_adv(obs_opp_ph), np.zeros(shape=(obs_opp_ph.shape[0],))
 
     def modeling_state(self, action_ph, action_noise, obs_self):

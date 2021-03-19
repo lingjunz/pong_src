@@ -1,12 +1,17 @@
 
-import sys,os
+import sys
+sys.path.append("..")
+
+import os
 import numpy as np
 import joblib
 from stable_baselines.common.vec_env import DummyVecEnv
-from stable_baselines import PPO1
-from pposgd_wrap import PPO1_model_value
+from replace.pposgd_simple import PPO1
+from ppoadv.pposgd_wrap import PPO1_model_value
 import gym
 import roboschool
+
+# import new_multiplayer
 
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
@@ -53,7 +58,7 @@ def play(env, model, player_n, steps):
     return trajectory_dic
 
             
-def test(game_server_id, seed, player_n, modelpath, save_traj, steps):
+def test(game_server_id, seed, player_n, modelpath, savepath, steps):
     env = gym.make("RoboschoolPong-v1")
     env.seed(seed)
     env.unwrapped.multiplayer(env, game_server_guid=game_server_id, player_n=player_n)
@@ -62,9 +67,9 @@ def test(game_server_id, seed, player_n, modelpath, save_traj, steps):
     
     if os.path.exists(modelpath):
 
-        if 'ppo1' in modelpath:
+        if 'victim' in modelpath or 'ppoN' in modelpath:
             model = PPO1.load(modelpath,env=env)
-        elif 'pposgd' in modelpath:
+        elif 'ppoAdv' in modelpath:
             model = PPO1_model_value.load(modelpath,env=env)
         else:
             assert False,"wrong modelpath:{}".format(modelpath)
@@ -72,8 +77,8 @@ def test(game_server_id, seed, player_n, modelpath, save_traj, steps):
         assert False,"Pretrained model is not found in {}".format(modelpath)
         
     trajectory_dic = play(env, model, player_n, steps)
-    if save_traj and player_n==0:
-        savepath = modelpath[:-4]+"_ppoadv_player{}_traj.data".format(player_n)
+    if savepath != "" and player_n==0:
+        savepath = modelpath[:-14] + savepath
         joblib.dump(trajectory_dic,savepath)
         print("Trajectories are saved in {} successfully".format(savepath))
 
@@ -84,10 +89,10 @@ def parse_args():
     # memo, hyper_index and server for create the serve
     parser.add_argument("--game_server_id", type=str)
     parser.add_argument("--mode", type=str)
-    parser.add_argument("--seed", type=int, default=101)
-    parser.add_argument("--save_traj", type=bool, default=False)
-    parser.add_argument("--steps", type=int, default=1000)
-    parser.add_argument("--player_n", type=int, default=0)
+    parser.add_argument("--seed", type=int)
+    parser.add_argument("--save_traj", type=str)
+    parser.add_argument("--steps", type=int)
+    parser.add_argument("--player_n", type=int)
     parser.add_argument("--modelpath", type=str)
     
     return parser.parse_args()        
